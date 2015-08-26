@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mou01.core.util.CheckUtilWx;
 import com.mou01.core.util.HttpServletRequestUtil;
+import com.mou01.core.util.WxMessageUtil;
 
 /****
  * 
@@ -19,21 +22,21 @@ import com.mou01.core.util.HttpServletRequestUtil;
  *
  */
 @Controller
-@RequestMapping("/wxcheck")
+@RequestMapping("/wx")
 public class WxCheckDevelopController {
 
 	private static final Logger logger = LogManager
 			.getLogger(WxCheckDevelopController.class);
+
 	/****
-	 * 查询系统城市信息（按照父节点id）
 	 * 
 	 * @param model
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/check", method = RequestMethod.GET)
+	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	@ResponseBody
-	public Object check(Model model, HttpServletRequest request) {
+	public Object homeEntrance(Model model, HttpServletRequest request) {
 		String params = HttpServletRequestUtil.getParams(request);
 		logger.debug(params);
 		try {
@@ -47,6 +50,41 @@ public class WxCheckDevelopController {
 			String echostr = HttpServletRequestUtil.getTrimParameter(request,
 					"echostr");
 
+			if (CheckUtilWx.checkSignature(signature, timestamp, nonce)) {
+				return echostr;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	/****
+	 * 
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/home", method = RequestMethod.POST)
+	@ResponseBody
+	public Object homeBusiness(Model model, HttpServletRequest request) {
+		String params = HttpServletRequestUtil.getParams(request);
+		logger.debug(params);
+		try {
+
+			String signature = HttpServletRequestUtil.getTrimParameter(request,
+					"signature");
+			String timestamp = HttpServletRequestUtil.getTrimParameter(request,
+					"timestamp");
+			String nonce = HttpServletRequestUtil.getTrimParameter(request,
+					"nonce");
+			String echostr = HttpServletRequestUtil.getTrimParameter(request,
+					"echostr");
+
+			Map<String, String> paramsMap = WxMessageUtil.xml2Map(request);
+			
+			// WxMessageUtil.textMessage2Xml(message);
 			if (CheckUtilWx.checkSignature(signature, timestamp, nonce)) {
 				return echostr;
 			}
