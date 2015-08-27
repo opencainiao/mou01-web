@@ -7,7 +7,13 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
 	<context:component-scan base-package="controller" />
-	<mvc:annotation-driven />
+
+	<!-- 配置返回的内容为utf-8编码 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="com.mou01.core.handler.UTF8StringHttpMessageConverter" />
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 
 	<bean id="SpringApplicationContext" class="com.mou01.core.util.WebContextUtil"></bean>
 
