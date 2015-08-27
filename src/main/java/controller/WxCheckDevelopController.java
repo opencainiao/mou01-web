@@ -3,6 +3,7 @@ package controller;
 import java.util.Date;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import service.IEventMessageService;
+import service.ITextMessageService;
 
 import com.mou01.core.domain.WxTextMessage;
 import com.mou01.core.util.CheckUtilWx;
@@ -30,6 +34,12 @@ public class WxCheckDevelopController {
 
 	private static final Logger logger = LogManager
 			.getLogger(WxCheckDevelopController.class);
+
+	@Resource(name = "textMessageService")
+	private ITextMessageService textMessageService;
+
+	@Resource(name = "eventMessageService")
+	private IEventMessageService eventMessageService;
 
 	/****
 	 * 
@@ -77,7 +87,7 @@ public class WxCheckDevelopController {
 		try {
 
 			Map<String, String> paramsMap = WxMessageUtil.xml2Map(request);
-			System.out.println(JsonUtil.getPrettyJsonStr(paramsMap));
+			logger.debug("请求参数\n{}", JsonUtil.getPrettyJsonStr(paramsMap));
 
 			String ToUserName = paramsMap.get("ToUserName");// 开发者微信号
 			String FromUserName = paramsMap.get("FromUserName");// 发送方帐号（一个OpenID）
@@ -94,11 +104,17 @@ public class WxCheckDevelopController {
 				wxTextMessage.setToUserName(FromUserName);
 				wxTextMessage.setMsgType("text");
 				wxTextMessage.setCreateTime(new Date().getTime());
-				wxTextMessage.setContent("您发送的消息是：" + Content);
+				String contentResponse = textMessageService
+						.handleTextMessage(Content);
+				wxTextMessage.setContent(contentResponse);
 
 				message = WxMessageUtil.textMessage2Xml(wxTextMessage);
-				
-				logger.debug("服务器返回的消息\n{}",message);
+
+				logger.debug("服务器返回的消息\n{}", message);
+			} else if ("event".equals(MsgType)) {
+
+				message = this.eventMessageService
+						.handleEventMessage(paramsMap);
 			}
 
 			return message;
