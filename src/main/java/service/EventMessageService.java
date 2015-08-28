@@ -11,8 +11,8 @@ import org.mou.common.DateUtil;
 import org.springframework.stereotype.Service;
 
 import com.mou.mongodb.base.springdb.dao.CommonDaoMongo;
-import com.mou01.core.domain.WxTextMessage;
 import com.mou01.core.domain.wx.event.WxEvent;
+import com.mou01.core.domain.wx.normal.WxTextMessage;
 import com.mou01.core.util.WxMessageUtil;
 
 /****
@@ -24,8 +24,7 @@ import com.mou01.core.util.WxMessageUtil;
 @Service("eventMessageService")
 public class EventMessageService implements IEventMessageService {
 
-	private static final Logger logger = LogManager
-			.getLogger(EventMessageService.class);
+	private static final Logger logger = LogManager.getLogger(EventMessageService.class);
 
 	@Resource(name = "commonDaoMongo")
 	private CommonDaoMongo commonDaoMongo;
@@ -52,8 +51,7 @@ public class EventMessageService implements IEventMessageService {
 
 		String FromUserName = paramsMap.get("FromUserName");// 发送方帐号（一个OpenID）
 
-		logger.info("用户[{}]于[{}]取消关注", FromUserName,
-				DateUtil.getCurrentTimsmp());
+		logger.info("用户[{}]于[{}]取消关注", FromUserName, DateUtil.getCurrentTimsmp());
 
 		WxEvent event = new WxEvent();
 		event.SetInfoSubOrUnSub(paramsMap);
@@ -82,7 +80,7 @@ public class EventMessageService implements IEventMessageService {
 		String contentResponse = "不支持的事件";
 		wxTextMessage.setContent(contentResponse);
 
-		return WxMessageUtil.textMessage2Xml(wxTextMessage);
+		return WxMessageUtil.WxMessage2Xml(wxTextMessage);
 	}
 
 	/****
@@ -111,7 +109,7 @@ public class EventMessageService implements IEventMessageService {
 		String contentResponse = "欢迎您的关注，我们等你好久了，亲 :)";
 		wxTextMessage.setContent(contentResponse);
 
-		return WxMessageUtil.textMessage2Xml(wxTextMessage);
+		return WxMessageUtil.WxMessage2Xml(wxTextMessage);
 	}
 
 }

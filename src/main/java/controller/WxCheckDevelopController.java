@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import service.IEventMessageService;
-import service.ITextMessageService;
-
-import com.mou01.core.domain.WxTextMessage;
+import com.mou01.core.domain.wx.normal.WxTextMessage;
 import com.mou01.core.util.CheckUtilWx;
 import com.mou01.core.util.HttpServletRequestUtil;
 import com.mou01.core.util.WxMessageUtil;
+
+import service.IEventMessageService;
+import service.ITextMessageService;
 
 /****
  * 
@@ -32,8 +32,7 @@ import com.mou01.core.util.WxMessageUtil;
 @RequestMapping("/wx")
 public class WxCheckDevelopController {
 
-	private static final Logger logger = LogManager
-			.getLogger(WxCheckDevelopController.class);
+	private static final Logger logger = LogManager.getLogger(WxCheckDevelopController.class);
 
 	@Resource(name = "textMessageService")
 	private ITextMessageService textMessageService;
@@ -54,14 +53,10 @@ public class WxCheckDevelopController {
 		logger.debug(params);
 		try {
 
-			String signature = HttpServletRequestUtil.getTrimParameter(request,
-					"signature");
-			String timestamp = HttpServletRequestUtil.getTrimParameter(request,
-					"timestamp");
-			String nonce = HttpServletRequestUtil.getTrimParameter(request,
-					"nonce");
-			String echostr = HttpServletRequestUtil.getTrimParameter(request,
-					"echostr");
+			String signature = HttpServletRequestUtil.getTrimParameter(request, "signature");
+			String timestamp = HttpServletRequestUtil.getTrimParameter(request, "timestamp");
+			String nonce = HttpServletRequestUtil.getTrimParameter(request, "nonce");
+			String echostr = HttpServletRequestUtil.getTrimParameter(request, "echostr");
 
 			if (CheckUtilWx.checkSignature(signature, timestamp, nonce)) {
 				return echostr;
@@ -104,17 +99,15 @@ public class WxCheckDevelopController {
 				wxTextMessage.setToUserName(FromUserName);
 				wxTextMessage.setMsgType("text");
 				wxTextMessage.setCreateTime(new Date().getTime());
-				String contentResponse = textMessageService
-						.handleTextMessage(Content);
+				String contentResponse = textMessageService.handleTextMessage(Content);
 				wxTextMessage.setContent(contentResponse);
 
-				message = WxMessageUtil.textMessage2Xml(wxTextMessage);
+				message = WxMessageUtil.WxMessage2Xml(wxTextMessage);
 
 				logger.debug("服务器返回的消息\n{}", message);
 			} else if ("event".equals(MsgType)) {
 
-				message = this.eventMessageService
-						.handleEventMessage(paramsMap);
+				message = this.eventMessageService.handleEventMessage(paramsMap);
 			}
 
 			return message;
