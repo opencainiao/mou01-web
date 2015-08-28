@@ -1,5 +1,7 @@
 package service;
 
+import java.util.Map;
+
 /****
  * 文本消息处理
  * 
@@ -7,6 +9,8 @@ package service;
  *
  */
 public interface ITextMessageService {
+	
+	public String handleNormalMessage(Map<String,String >paramsMap);
 
 	/****
 	 * 处理文本消息

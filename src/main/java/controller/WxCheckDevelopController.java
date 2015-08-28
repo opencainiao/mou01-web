@@ -92,22 +92,11 @@ public class WxCheckDevelopController {
 			String MsgId = paramsMap.get("MsgId");// 消息id，64位整型
 
 			String message = null;
-			if ("text".equals(MsgType)) {
-				WxTextMessage wxTextMessage = new WxTextMessage();
-
-				wxTextMessage.setFromUserName(ToUserName);
-				wxTextMessage.setToUserName(FromUserName);
-				wxTextMessage.setMsgType("text");
-				wxTextMessage.setCreateTime(new Date().getTime());
-				String contentResponse = textMessageService.handleTextMessage(Content);
-				wxTextMessage.setContent(contentResponse);
-
-				message = WxMessageUtil.WxMessage2Xml(wxTextMessage);
-
-				logger.debug("服务器返回的消息\n{}", message);
-			} else if ("event".equals(MsgType)) {
-
+			if ("event".equals(MsgType)) {
 				message = this.eventMessageService.handleEventMessage(paramsMap);
+			} else {
+				message = textMessageService.handleNormalMessage(paramsMap);
+				logger.debug("后台服务器返回给微信的消息\n{}", message);
 			}
 
 			return message;
