@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.mou.mongodb.base.springdb.dao.CommonDaoMongo;
 import com.mou01.core.domain.WxTextMessage;
-import com.mou01.core.domain.wx.Event;
+import com.mou01.core.domain.wx.event.WxEvent;
 import com.mou01.core.util.WxMessageUtil;
 
 /****
@@ -55,7 +55,7 @@ public class EventMessageService implements IEventMessageService {
 		logger.info("用户[{}]于[{}]取消关注", FromUserName,
 				DateUtil.getCurrentTimsmp());
 
-		Event event = new Event();
+		WxEvent event = new WxEvent();
 		event.SetInfoSubOrUnSub(paramsMap);
 
 		this.commonDaoMongo.insertOne(event);
@@ -94,7 +94,7 @@ public class EventMessageService implements IEventMessageService {
 	private String handleSubscribe(Map<String, String> paramsMap) {
 
 		// 登记数据库日志
-		Event event = new Event();
+		WxEvent event = new WxEvent();
 		event.SetInfoSubOrUnSub(paramsMap);
 		this.commonDaoMongo.insertOne(event);
 
