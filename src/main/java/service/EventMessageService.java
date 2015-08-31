@@ -11,8 +11,8 @@ import org.mou.common.DateUtil;
 import org.springframework.stereotype.Service;
 
 import com.mou.mongodb.base.springdb.dao.CommonDaoMongo;
-import com.mou01.core.domain.wx.event.WxEvent;
-import com.mou01.core.domain.wx.normal.WxTextMessage;
+import com.mou01.core.domain.wx.message.event.WxEvent;
+import com.mou01.core.domain.wx.message.normal.WxTextMessage;
 import com.mou01.core.util.WxMessageUtil;
 
 /****

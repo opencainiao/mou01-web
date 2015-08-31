@@ -9,15 +9,13 @@ import java.util.Map;
  *
  */
 public interface ITextMessageService {
-	
-	public String handleNormalMessage(Map<String,String >paramsMap);
 
 	/****
-	 * 处理文本消息
+	 * 处理普通消息
 	 * 
-	 * @param content
+	 * @param paramsMap
 	 * @return
 	 */
-	String handleTextMessage(String content);
+	public String handleNormalMessage(Map<String, String> paramsMap);
 
 }

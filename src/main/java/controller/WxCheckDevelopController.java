@@ -1,6 +1,5 @@
 package controller;
 
-import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -15,13 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.mou01.core.domain.wx.normal.WxTextMessage;
+import service.IEventMessageService;
+import service.ITextMessageService;
+
 import com.mou01.core.util.CheckUtilWx;
 import com.mou01.core.util.HttpServletRequestUtil;
 import com.mou01.core.util.WxMessageUtil;
-
-import service.IEventMessageService;
-import service.ITextMessageService;
 
 /****
  * 
@@ -32,7 +30,8 @@ import service.ITextMessageService;
 @RequestMapping("/wx")
 public class WxCheckDevelopController {
 
-	private static final Logger logger = LogManager.getLogger(WxCheckDevelopController.class);
+	private static final Logger logger = LogManager
+			.getLogger(WxCheckDevelopController.class);
 
 	@Resource(name = "textMessageService")
 	private ITextMessageService textMessageService;
@@ -53,10 +52,14 @@ public class WxCheckDevelopController {
 		logger.debug(params);
 		try {
 
-			String signature = HttpServletRequestUtil.getTrimParameter(request, "signature");
-			String timestamp = HttpServletRequestUtil.getTrimParameter(request, "timestamp");
-			String nonce = HttpServletRequestUtil.getTrimParameter(request, "nonce");
-			String echostr = HttpServletRequestUtil.getTrimParameter(request, "echostr");
+			String signature = HttpServletRequestUtil.getTrimParameter(request,
+					"signature");
+			String timestamp = HttpServletRequestUtil.getTrimParameter(request,
+					"timestamp");
+			String nonce = HttpServletRequestUtil.getTrimParameter(request,
+					"nonce");
+			String echostr = HttpServletRequestUtil.getTrimParameter(request,
+					"echostr");
 
 			if (CheckUtilWx.checkSignature(signature, timestamp, nonce)) {
 				return echostr;
@@ -93,7 +96,8 @@ public class WxCheckDevelopController {
 
 			String message = null;
 			if ("event".equals(MsgType)) {
-				message = this.eventMessageService.handleEventMessage(paramsMap);
+				message = this.eventMessageService
+						.handleEventMessage(paramsMap);
 			} else {
 				message = textMessageService.handleNormalMessage(paramsMap);
 				logger.debug("后台服务器返回给微信的消息\n{}", message);
