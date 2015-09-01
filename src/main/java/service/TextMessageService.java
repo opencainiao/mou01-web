@@ -5,8 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mou.common.StringUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import com.mou01.core.domain.wx.message.WxMessage;
 import com.mou01.core.domain.wx.message.WxMessageType;
@@ -21,6 +24,9 @@ import com.mou01.core.domain.wx.message.toweixin.NewsMessage;
 @Service("textMessageService")
 public class TextMessageService implements ITextMessageService {
 
+	private static final Logger logger = LogManager
+			.getLogger(TextMessageService.class);
+
 	@Override
 	public String handleNormalMessage(Map<String, String> paramsMap) {
 
@@ -30,40 +36,49 @@ public class TextMessageService implements ITextMessageService {
 
 		String content = null;
 		if (StringUtil.isEmpty(contentIn)) {
-			StringBuffer sb = new StringBuffer();
-			sb.append("请参考如下命令列表:").append("\n");
-			sb.append("1:欢迎").append("\n");
-			sb.append("2:图文消息").append("\n");
-			sb.append("3:图片消息").append("\n");
-			sb.append("4:歌曲《小苹果》").append("\n");
-			content = sb.toString();
+			content = createTextMenu();
 		} else if (contentIn.equals("1")) {
 			content = "环境光临";
 		} else if (contentIn.equals("2")) {
-			WxMessage message = createNewsMessage(FromUserName, ToUserName);
+			WxMessage message = createNewsMessage(ToUserName, FromUserName);
 			return message.toXML();
 		} else if (contentIn.equals("3")) {
-			WxMessage message = createImageMessage(FromUserName, ToUserName);
+			WxMessage message = createImageMessage(ToUserName, FromUserName);
 			return message.toXML();
 		} else if (contentIn.equals("4")) {
-			WxMessage message = createMusicMessage(FromUserName, ToUserName);
+			WxMessage message = createMusicMessage(ToUserName, FromUserName);
 			return message.toXML();
+		} else if (contentIn.equals("5")) {
+			String url = "http://www.baidu.com";
+			content = createLinkMessageContent(url);
 		} else if (contentIn.equals("?") || contentIn.equals("？")) {
-			StringBuffer sb = new StringBuffer();
-			sb.append("请参考如下命令列表:").append("\n");
-			sb.append("1:欢迎").append("\n");
-			sb.append("2:图文消息").append("\n");
-			sb.append("3:图片消息").append("\n");
-			sb.append("4:歌曲《小苹果》").append("\n");
-			content = sb.toString();
+			content = createTextMenu();
 		} else {
 			content = "如有问题，请输入?";
 
 		}
 
-		WxMessage message = createTextMessage(FromUserName, ToUserName, content);
+		WxMessage message = createTextMessage(ToUserName, FromUserName, content);
 
 		return message.toXML();
+	}
+
+	private String createLinkMessageContent(String url) {
+
+		String url_to = "<a href=\"" + url + "\">百度" + "</a>";
+
+		return url_to;
+	}
+
+	private String createTextMenu() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("请参考如下命令列表:").append("\n");
+		sb.append("1:欢迎").append("\n");
+		sb.append("2:图文消息").append("\n");
+		sb.append("3:图片消息").append("\n");
+		sb.append("4:歌曲《小苹果》").append("\n");
+		sb.append("5:百度").append("\n");
+		return sb.toString();
 	}
 
 	private WxMessage createImageMessage(String ToUserName, String FromUserName) {
@@ -138,4 +153,15 @@ public class TextMessageService implements ITextMessageService {
 
 		return newsMessage;
 	}
+
+	public static void main(String[] args) {
+
+		String aa = "<a href=\"http://www.baidu.com\">百度" + "</a>";
+
+		System.out.println(aa);
+
+		String aaes = HtmlUtils.htmlEscape(aa);
+		System.out.println(aaes);
+	}
+
 }
